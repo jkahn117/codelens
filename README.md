@@ -22,7 +22,7 @@ Paste a repo URL and RepoScope clones it, analyzes the codebase, and renders a l
 - [Cloudflare Container Sandbox](https://developers.cloudflare.com/sandbox/) for isolated repo analysis
 - React 19 + TypeScript + Vite
 - Tailwind CSS v4 + Recharts
-- Anthropic Claude via the Cloudflare AI binding
+- GPT-4.1 via the Cloudflare AI binding + AI Gateway
 
 ## Project structure
 
@@ -39,25 +39,21 @@ sandbox/Dockerfile      # Analysis container image
 
 ## Running locally
 
+**Prerequisites:** Docker must be running. The analysis sandbox builds and starts a container on first run.
+
 1. Install dependencies:
 
    ```bash
    pnpm install
    ```
 
-2. Copy environment variables and add your Anthropic API key:
-
-   ```bash
-   cp .dev.vars.example .dev.vars
-   ```
-
-3. Start the Worker and Vite dev server:
+2. Start the Worker and Vite dev server:
 
    ```bash
    pnpm dev
    ```
 
-4. Open the local URL shown by Vite, paste a public GitHub repo URL, and click **Analyze**.
+3. Open `http://localhost:5173`, paste a public GitHub repo URL, and click **Analyze**.
 
 ## Building and deploying
 
