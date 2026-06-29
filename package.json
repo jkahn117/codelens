@@ -1,0 +1,39 @@
+{
+  "name": "reposcope",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n worker,ui -c cyan,green \"flue dev --target cloudflare\" \"vite\"",
+    "dev:worker": "flue dev --target cloudflare",
+    "dev:ui": "vite",
+    "build": "flue build --target cloudflare && vite build",
+    "typecheck": "tsc --noEmit",
+    "deploy": "pnpm run build && wrangler deploy --config dist/reposcope/wrangler.json"
+  },
+  "dependencies": {
+    "@cloudflare/sandbox": "^0.12.1",
+    "@flue/react": "1.0.0-beta.8",
+    "@flue/runtime": "1.0.0-beta.8",
+    "@flue/sdk": "1.0.0-beta.8",
+    "agents": "^0.14.2",
+    "hono": "^4.7.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "recharts": "^3.9.0",
+    "valibot": "^1.0.0"
+  },
+  "devDependencies": {
+    "@flue/cli": "1.0.0-beta.8",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "^22.20.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "concurrently": "^10.0.3",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0",
+    "vite": "^8.1.0",
+    "wrangler": "^4.105.0"
+  }
+}
