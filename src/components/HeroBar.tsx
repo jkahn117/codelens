@@ -19,7 +19,6 @@ export function HeroBar({ onAnalyze, onReset, analyzing, hasResult }: HeroBarPro
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-4 border-b border-border bg-panel px-6">
-      <span className="font-mono text-sm font-semibold text-text-primary">RepoScope</span>
       <form onSubmit={handleSubmit} className="flex flex-1 items-center gap-3">
         <input
           type="text"

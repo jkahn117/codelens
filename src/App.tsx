@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { HeroBar } from "./components/HeroBar.tsx";
+import { TopBar } from "./components/TopBar.tsx";
 import { DashboardPanel } from "./components/DashboardPanel.tsx";
 import { RightPanel } from "./components/RightPanel.tsx";
 import { useAnalysis } from "./hooks/useAnalysis.ts";
@@ -34,6 +35,7 @@ export function App() {
 
   return (
     <div className="flex h-full w-full flex-col bg-page">
+      <TopBar />
       <HeroBar
         onAnalyze={handleAnalyze}
         onReset={handleReset}
