@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "reposcope",
+  "name": "codelens",
   "compatibility_date": "2026-06-01",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
@@ -8,6 +8,12 @@
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
     "run_worker_first": ["/_flue/*", "/agents/*", "/workflows/*", "/runs/*"],
+  },
+  "observability": {
+    "enabled": true,
+    "traces": {
+      "enabled": true,
+    },
   },
   "ai": {
     "binding": "AI",
@@ -27,4 +33,14 @@
     { "tag": "v2", "new_sqlite_classes": ["Sandbox"] },
   ],
   "containers": [{ "class_name": "Sandbox", "image": "./sandbox/Dockerfile" }],
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "codelens.dev",
+      "custom_domain": true,
+    },
+  ],
+  "vars": {
+    "VITE_CLERK_PUBLISHABLE_KEY": "pk_test_Zml0dGluZy1pZ3VhbmEtMTAuY2xlcmsuYWNjb3VudHMuZGV2JA",
+  },
 }

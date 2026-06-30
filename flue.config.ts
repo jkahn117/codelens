@@ -9,7 +9,7 @@ export default defineConfig({
 // before they exist on disk).
 export const vite = {
   environments: {
-    reposcope: {
+    codelens: {
       optimizeDeps: {
         include: [
           "@cloudflare/sandbox",

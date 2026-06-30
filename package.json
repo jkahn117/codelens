@@ -1,5 +1,5 @@
 {
-  "name": "reposcope",
+  "name": "codelens",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,9 +9,10 @@
     "dev:ui": "vite",
     "build": "flue build --target cloudflare && vite build",
     "typecheck": "tsc --noEmit",
-    "deploy": "pnpm run build && wrangler deploy --config dist/reposcope/wrangler.json"
+    "deploy": "pnpm run build && wrangler deploy --config dist/codelens/wrangler.json"
   },
   "dependencies": {
+    "@clerk/react": "^6.11.1",
     "@cloudflare/sandbox": "^0.12.1",
     "@flue/react": "1.0.0-beta.8",
     "@flue/runtime": "1.0.0-beta.8",

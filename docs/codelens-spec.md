@@ -1,4 +1,4 @@
-# RepoScope — Demo App Specification
+# CodeLens — Demo App Specification
 
 **Version:** 0.2  
 **Stack:** Flue `1.0.0-beta.6`, Cloudflare Workers + Container Sandbox, React, `@flue/react`
@@ -7,7 +7,7 @@
 
 ## Overview
 
-RepoScope is a single-page web app. The user pastes a GitHub repo URL and the agent
+CodeLens is a single-page web app. The user pastes a GitHub repo URL and the agent
 clones and analyzes it — streaming live progress — then renders a visual dashboard.
 A persistent chat panel lets the user ask questions about the repo at any time.
 
@@ -22,7 +22,7 @@ The page has no navigation, no sidebar, no header chrome. Full viewport, dark th
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  HERO BAR  [RepoScope]          [github.com/... URL input]   [Analyze →]│
+│  HERO BAR  [CodeLens]           [github.com/... URL input]   [Analyze →]│
 ├────────────────────────────────────┬────────────────────────────────────┤
 │                                    │                                    │
 │         DASHBOARD PANEL            │        RIGHT PANEL                 │
@@ -79,7 +79,7 @@ The app has three top-level states that control what renders:
 ### Hero Bar
 
 - Fixed height (~56px), spans full width
-- Left: wordmark "RepoScope" in monospace, small
+- Left: wordmark "CodeLens" in monospace, small
 - Center: URL text input, wide, placeholder `github.com/owner/repo`
 - Right: "Analyze" button — primary action
 - On submit: button becomes a loading spinner, input becomes read-only
@@ -422,7 +422,7 @@ export { Sandbox } from '@cloudflare/sandbox';
 ```jsonc
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "reposcope",
+  "name": "codelens",
   "compatibility_date": "2026-06-01",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
@@ -578,7 +578,7 @@ const client = createFlueClient({ baseUrl: '/' });
 export function App() {
   return (
     <FlueProvider client={client}>
-      <RepoScope />
+      <CodeLens />
     </FlueProvider>
   );
 }

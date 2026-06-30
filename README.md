@@ -1,10 +1,10 @@
-# RepoScope
+# CodeLens
 
 A demo app that visualizes any public GitHub repository in a single click.
 
-Paste a repo URL and RepoScope clones it, analyzes the codebase, and renders a live dashboard with language breakdown, dependency sizes, file complexity, and a codebase heatmap. A persistent chat panel lets you ask follow-up questions about the repo.
+Paste a repo URL and CodeLens clones it, analyzes the codebase, and renders a live dashboard with language breakdown, dependency sizes, file complexity, and a codebase heatmap. A persistent chat panel lets you ask follow-up questions about the repo.
 
-> **Demo note:** RepoScope is built for presentations, not production. It targets public repos, desktop viewports, and a dark theme. Error handling and edge-case fallbacks are intentionally minimal.
+> **Demo note:** CodeLens is built for presentations, not production. It targets public repos, desktop viewports, and a dark theme. Error handling and edge-case fallbacks are intentionally minimal.
 
 ## What it shows
 
@@ -68,4 +68,4 @@ Append `?embed=dashboard` to the URL to hide the hero bar and chat panel, leavin
 
 ## Learn more
 
-- Specification: [`docs/reposcope-spec.md`](docs/reposcope-spec.md)
+- Specification: [`docs/codelens-spec.md`](docs/codelens-spec.md)
