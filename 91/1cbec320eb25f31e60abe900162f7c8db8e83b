@@ -1,0 +1,19 @@
+src/workflows/analyze.ts
+  s_8eaef5a475c00a::t_108992ce4f72b7 7-11,15,51-55,57-61,67-72,74-78,84,89-100,103,106-107,109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "911cbec320eb25f31e60abe900162f7c8db8e83b",
+  "prompts": {},
+  "sessions": {
+    "s_8eaef5a475c00a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0703f2f3affeY57m1YNF2v3gbp",
+        "model": "grok-4.5"
+      },
+      "human_author": "Josh Kahn <jkahn@cloudflare.com>"
+    }
+  }
+}
