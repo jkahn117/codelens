@@ -9,26 +9,31 @@ import type { AppState } from "./types.ts";
 export function App() {
   const [state, setState] = useState<AppState>("empty");
   const [repoUrl, setRepoUrl] = useState<string | null>(null);
-  const { analyze, steps, result, analyzing, reset } = useAnalysis();
+  // Fresh id per analysis run so chat history does not carry across runs.
+  const [chatSessionId, setChatSessionId] = useState<string | null>(null);
+  const { analyze, steps, result, analyzing, error, reset } = useAnalysis();
   const embed = new URLSearchParams(window.location.search).has("embed");
 
   async function handleAnalyze(url: string) {
+    const sessionId = crypto.randomUUID().replace(/-/g, "").slice(0, 16);
     setRepoUrl(url);
+    setChatSessionId(sessionId);
     setState("analyzing");
-    await analyze(url);
-    setState("complete");
+    const next = await analyze(url, sessionId);
+    setState(next ? "complete" : "error");
   }
 
   function handleReset() {
     reset();
     setRepoUrl(null);
+    setChatSessionId(null);
     setState("empty");
   }
 
   if (embed) {
     return (
       <div className="h-full w-full overflow-hidden bg-page">
-        <DashboardPanel result={result} analyzing={analyzing} />
+        <DashboardPanel result={result} analyzing={analyzing} error={error} />
       </div>
     );
   }
@@ -44,10 +49,10 @@ export function App() {
       />
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 overflow-y-auto border-r border-border">
-          <DashboardPanel result={result} analyzing={analyzing} />
+          <DashboardPanel result={result} analyzing={analyzing} error={error} />
         </div>
         <div className="w-[40%] min-w-90">
-          <RightPanel steps={steps} state={state} repoUrl={repoUrl} />
+          <RightPanel steps={steps} state={state} error={error} chatSessionId={chatSessionId} />
         </div>
       </div>
     </div>

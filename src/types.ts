@@ -1,4 +1,4 @@
-// Mirrors the Valibot AnalysisResult schema in .flue/workflows/analyze.ts
+// Mirrors the Valibot AnalysisResult schema in workflows/analyze.ts
 export interface AnalysisResult {
   languages: { name: string; percent: number; color: string }[];
   badges: {
@@ -12,12 +12,12 @@ export interface AnalysisResult {
   fileTree: { path: string; lines: number; directory: string }[];
 }
 
-export type AppState = "empty" | "analyzing" | "complete";
+export type AppState = "empty" | "analyzing" | "complete" | "error";
 
 export interface FeedStep {
   id: string;
   label: string;
-  status: "pending" | "in-progress" | "complete";
+  status: "pending" | "in-progress" | "complete" | "error";
   duration?: string;
 }
 

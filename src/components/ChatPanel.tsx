@@ -4,8 +4,25 @@ import { MessageList } from "./MessageList.tsx";
 import { MessageInput } from "./MessageInput.tsx";
 import { SuggestedQuestions } from "./SuggestedQuestions.tsx";
 
-export function ChatPanel({ state, repoUrl }: { state: AppState; repoUrl: string | null }) {
-  const { messages, send, streaming } = useChat(repoUrl);
+export function ChatPanel({
+  state,
+  chatSessionId,
+}: {
+  state: AppState;
+  chatSessionId: string | null;
+}) {
+  // Key remounts the hook/session when a new analysis run starts.
+  return <ChatSession key={chatSessionId ?? "idle"} state={state} chatSessionId={chatSessionId} />;
+}
+
+function ChatSession({
+  state,
+  chatSessionId,
+}: {
+  state: AppState;
+  chatSessionId: string | null;
+}) {
+  const { messages, send, streaming } = useChat(chatSessionId);
   const disabled = state === "analyzing";
   const showSuggestions = state === "complete";
 
@@ -27,7 +44,6 @@ export function ChatPanel({ state, repoUrl }: { state: AppState; repoUrl: string
           <MessageList messages={messages} streaming={streaming} />
         )}
       </div>
-      {/* Suggestions always visible after analysis completes */}
       {showSuggestions && <SuggestedQuestions onSelect={send} />}
       <MessageInput onSend={send} disabled={disabled || streaming} />
     </div>

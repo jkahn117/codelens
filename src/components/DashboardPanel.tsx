@@ -9,13 +9,18 @@ import { Skeleton } from "./Skeleton.tsx";
 interface DashboardPanelProps {
   result: AnalysisResult | null;
   analyzing: boolean;
+  error?: string | null;
 }
 
-export function DashboardPanel({ result, analyzing }: DashboardPanelProps) {
+export function DashboardPanel({ result, analyzing, error }: DashboardPanelProps) {
   if (!result && !analyzing) {
     return (
       <div className="flex h-full items-center justify-center p-8">
-        <p className="font-mono text-lg text-text-dim">Paste a GitHub repo URL to analyze it</p>
+        <p className="font-mono text-lg text-text-dim">
+          {error
+            ? `Analysis failed: ${error}`
+            : "Paste a GitHub repo URL to analyze it"}
+        </p>
       </div>
     );
   }

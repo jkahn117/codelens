@@ -1,17 +1,8 @@
 import { useFlueAgent } from "@flue/react";
-import { useMemo, useState } from "react";
-import { hashRepoUrl } from "../lib/hashRepoUrl.ts";
 
-// Chat composable backed by useFlueAgent (beta.8 conversation API).
-export function useChat(repoUrl: string | null) {
-  const [agentId, setAgentId] = useState<string>("");
-
-  // Derive the stable agent ID from the repo URL once it's available.
-  useMemo(() => {
-    if (!repoUrl) return;
-    hashRepoUrl(repoUrl).then(setAgentId);
-  }, [repoUrl]);
-
+// Chat composable backed by useFlueAgent. agentId must match the workflow sandboxId
+// so analysis.json lands in the same container the chat agent uses.
+export function useChat(agentId: string | null) {
   const { messages, status, sendMessage } = useFlueAgent({
     name: "repo-analyzer",
     id: agentId || undefined,
