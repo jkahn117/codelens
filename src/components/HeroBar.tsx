@@ -8,6 +8,7 @@ interface HeroBarProps {
   onReset: () => void;
   analyzing: boolean;
   hasResult: boolean;
+  authEnabled: boolean;
 }
 
 /** Modal that appears when an unauthenticated user tries to run an analysis. */
@@ -66,28 +67,31 @@ function SignInPrompt({ onClose }: { onClose: () => void }) {
   );
 }
 
-export function HeroBar({ onAnalyze, onReset, analyzing, hasResult }: HeroBarProps) {
-  const [url, setUrl] = useState(DEFAULT_REPO);
-  const [showPrompt, setShowPrompt] = useState(false);
-  const { isSignedIn, isLoaded } = useUser();
+interface HeroBarContentProps {
+  url: string;
+  setUrl: (url: string) => void;
+  onSubmit: (event: React.FormEvent) => void;
+  onReset: () => void;
+  analyzing: boolean;
+  hasResult: boolean;
+  showPrompt: boolean;
+  onClosePrompt: () => void;
+}
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!url.trim() || analyzing) return;
-
-    if (isLoaded && !isSignedIn) {
-      // Gate: show sign-in prompt instead of starting analysis.
-      setShowPrompt(true);
-      return;
-    }
-
-    onAnalyze(url.trim());
-  }
-
+function HeroBarContent({
+  url,
+  setUrl,
+  onSubmit,
+  onReset,
+  analyzing,
+  hasResult,
+  showPrompt,
+  onClosePrompt,
+}: HeroBarContentProps) {
   return (
     <>
       <header className="flex h-14 shrink-0 items-center gap-4 border-b border-border bg-panel px-6">
-        <form onSubmit={handleSubmit} className="flex flex-1 items-center gap-3">
+        <form onSubmit={onSubmit} className="flex flex-1 items-center gap-3">
           <input
             type="text"
             value={url}
@@ -115,7 +119,81 @@ export function HeroBar({ onAnalyze, onReset, analyzing, hasResult }: HeroBarPro
         </form>
       </header>
 
-      {showPrompt && <SignInPrompt onClose={() => setShowPrompt(false)} />}
+      {showPrompt && <SignInPrompt onClose={onClosePrompt} />}
     </>
+  );
+}
+
+function AuthenticatedHeroBar({
+  url,
+  setUrl,
+  onAnalyze,
+  onReset,
+  analyzing,
+  hasResult,
+  showPrompt,
+  setShowPrompt,
+}: Omit<HeroBarContentProps, "onSubmit" | "onClosePrompt"> & { onAnalyze: (url: string) => void; setShowPrompt: (show: boolean) => void }) {
+  const { isSignedIn, isLoaded } = useUser();
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!url.trim() || analyzing) return;
+
+    if (isLoaded && !isSignedIn) {
+      setShowPrompt(true);
+      return;
+    }
+
+    onAnalyze(url.trim());
+  }
+
+  return (
+    <HeroBarContent
+      url={url}
+      setUrl={setUrl}
+      onSubmit={handleSubmit}
+      onReset={onReset}
+      analyzing={analyzing}
+      hasResult={hasResult}
+      showPrompt={showPrompt}
+      onClosePrompt={() => setShowPrompt(false)}
+    />
+  );
+}
+
+export function HeroBar({ onAnalyze, onReset, analyzing, hasResult, authEnabled }: HeroBarProps) {
+  const [url, setUrl] = useState(DEFAULT_REPO);
+  const [showPrompt, setShowPrompt] = useState(false);
+
+  if (authEnabled) {
+    return (
+      <AuthenticatedHeroBar
+        url={url}
+        setUrl={setUrl}
+        onAnalyze={onAnalyze}
+        onReset={onReset}
+        analyzing={analyzing}
+        hasResult={hasResult}
+        showPrompt={showPrompt}
+        setShowPrompt={setShowPrompt}
+      />
+    );
+  }
+
+  return (
+    <HeroBarContent
+      url={url}
+      setUrl={setUrl}
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (url.trim() && !analyzing) onAnalyze(url.trim());
+      }}
+      onReset={onReset}
+      analyzing={analyzing}
+      hasResult={hasResult}
+      showPrompt={false}
+      onClosePrompt={() => undefined}
+    />
   );
 }

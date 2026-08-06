@@ -18,11 +18,11 @@ Paste a repo URL and CodeLens clones it, analyzes the codebase, and renders a li
 
 ## Tech stack
 
-- [Flue](https://flue.dev) (`1.0.0-beta.8`) + Cloudflare Workers
+- [Flue](https://flue.dev) (`2.0.3`) + Cloudflare Workers
 - [Cloudflare Container Sandbox](https://developers.cloudflare.com/sandbox/) for isolated repo analysis
 - React 19 + TypeScript + Vite
-- Tailwind CSS v4 + Recharts
-- GPT-4.1 via the Cloudflare AI binding + AI Gateway
+- Tailwind CSS v4 + Recharts + GitHub-flavored Markdown
+- GLM-4.7-Flash via the Cloudflare AI binding + AI Gateway
 
 ## Project structure
 
@@ -30,8 +30,7 @@ Paste a repo URL and CodeLens clones it, analyzes the codebase, and renders a li
 src/                    # React frontend
   components/           # Hero bar, dashboard, charts, chat, feed
   hooks/                # useAnalysis, useChat
-  agents/               # repo-analyzer agent
-  workflows/            # analyze workflow
+  agents/               # repo-analyzer chat agent
   lib/                  # chart data transforms, step labels, URL hashing
 wrangler.jsonc          # Cloudflare Workers config
 sandbox/Dockerfile      # Analysis container image
@@ -39,7 +38,7 @@ sandbox/Dockerfile      # Analysis container image
 
 ## Running locally
 
-**Prerequisites:** Docker must be running. The analysis sandbox builds and starts a container on first run.
+**Prerequisites:** Node.js, pnpm, Docker, and a Cloudflare account with Workers AI enabled. Docker must be running because the analysis sandbox builds and starts a container on first run.
 
 1. Install dependencies:
 
@@ -50,17 +49,38 @@ sandbox/Dockerfile      # Analysis container image
 2. Start the Worker and Vite dev server:
 
    ```bash
-   pnpm dev
+   CLOUDFLARE_ACCOUNT_ID=<your-cloudflare-account-id> pnpm dev
    ```
 
 3. Open `http://localhost:5173`, paste a public GitHub repo URL, and click **Analyze**.
 
 ## Building and deploying
 
+Authenticate Wrangler before the first deployment:
+
 ```bash
-pnpm run build
+pnpm wrangler login
+```
+
+The project is configured to deploy the `codelens` Worker with:
+
+- The `Sandbox` Durable Object and container image from `sandbox/Dockerfile`
+- The Workers AI binding named `AI`
+- The `FlueRepoAnalyzerAgent` Durable Object
+- Static assets from `dist/client`
+- The `codelens.dev` custom domain
+
+Before deploying, make sure the Cloudflare account owns and has DNS configured for `codelens.dev`, and that the AI Gateway named `jkahn1` exists. The gateway ID is configured in `src/app.ts`.
+
+Authentication is disabled by default. To enable the optional Clerk demo flow, provide `VITE_ENABLE_AUTH=true` and `VITE_CLERK_PUBLISHABLE_KEY` in the environment used to build the frontend. Do not commit Clerk secret keys or other credentials.
+
+Deploy with:
+
+```bash
 pnpm run deploy
 ```
+
+`pnpm run deploy` builds the frontend and then runs `wrangler deploy`.
 
 ## Slide embed mode
 

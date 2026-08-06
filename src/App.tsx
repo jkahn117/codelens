@@ -6,7 +6,7 @@ import { RightPanel } from "./components/RightPanel.tsx";
 import { useAnalysis } from "./hooks/useAnalysis.ts";
 import type { AppState } from "./types.ts";
 
-export function App() {
+export function App({ authEnabled }: { authEnabled: boolean }) {
   const [state, setState] = useState<AppState>("empty");
   const [repoUrl, setRepoUrl] = useState<string | null>(null);
   // Fresh id per analysis run so chat history does not carry across runs.
@@ -40,12 +40,13 @@ export function App() {
 
   return (
     <div className="flex h-full w-full flex-col bg-page">
-      <TopBar />
+      <TopBar authEnabled={authEnabled} />
       <HeroBar
         onAnalyze={handleAnalyze}
         onReset={handleReset}
         analyzing={analyzing}
         hasResult={state === "complete"}
+        authEnabled={authEnabled}
       />
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 overflow-y-auto border-r border-border">

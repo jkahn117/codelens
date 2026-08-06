@@ -81,7 +81,7 @@ function UserSection() {
 }
 
 /** Top navigation bar: brand identity on the left, user auth on the right. */
-export function TopBar() {
+export function TopBar({ authEnabled }: { authEnabled: boolean }) {
   return (
     <div className="flex h-12 shrink-0 items-center justify-between border-b border-border bg-panel px-6">
       {/* Brand */}
@@ -95,8 +95,8 @@ export function TopBar() {
         </span>
       </div>
 
-      {/* Auth */}
-      <UserSection />
+      {/* Optional demo auth */}
+      {authEnabled && <UserSection />}
     </div>
   );
 }
