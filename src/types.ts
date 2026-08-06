@@ -1,4 +1,4 @@
-// Mirrors the Valibot AnalysisResult schema in workflows/analyze.ts
+// Mirrors the Valibot AnalysisResult schema in app.ts
 export interface AnalysisResult {
   languages: { name: string; percent: number; color: string }[];
   badges: {

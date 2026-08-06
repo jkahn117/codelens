@@ -1,4 +1,6 @@
 import type { FlueConversationMessage } from "@flue/react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 function messageText(msg: FlueConversationMessage): string {
   return msg.parts
@@ -25,7 +27,13 @@ export function MessageList({
               : "max-w-[85%] px-1 py-1 text-sm text-text-primary"
           }
         >
-          {messageText(msg)}
+          {msg.role !== "user" ? (
+            <div className="space-y-2 leading-6 [&_a]:text-accent [&_a]:underline [&_code]:rounded [&_code]:bg-panel [&_code]:px-1 [&_code]:font-mono [&_code]:text-[0.9em] [&_h1]:text-base [&_h1]:font-semibold [&_h2]:text-base [&_h2]:font-semibold [&_h3]:font-semibold [&_li]:ml-4 [&_li]:list-disc [&_ol]:space-y-1 [&_p]:min-h-5 [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-panel [&_pre]:p-3 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_ul]:space-y-1">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{messageText(msg)}</ReactMarkdown>
+            </div>
+          ) : (
+            messageText(msg)
+          )}
         </div>
       ))}
       {/* Typing indicator while agent is responding */}

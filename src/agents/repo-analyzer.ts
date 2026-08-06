@@ -1,13 +1,14 @@
-import { defineAgent, type AgentRouteHandler } from "@flue/runtime";
+"use agent";
+
+import { type AgentProps, useModel, useSandbox } from "@flue/runtime";
 import { cloudflareSandbox } from "@flue/runtime/cloudflare";
-import { getSandbox } from "@cloudflare/sandbox";
-import instructions from "./repo-analyzer.md" with { type: "markdown" };
+import { getSandbox, type Sandbox } from "@cloudflare/sandbox";
+import { env } from "cloudflare:workers";
+import instructions from "./repo-analyzer.md";
 
-// Expose HTTP prompt + event streaming for the chat panel
-export const route: AgentRouteHandler = async (_c, next) => next();
-
-export default defineAgent(({ id, env }) => ({
-  model: "cloudflare/openai/gpt-4.1",
-  sandbox: cloudflareSandbox(getSandbox(env.Sandbox, id)),
-  instructions,
-}));
+// Chat agent — mounted at /agents/repo-analyzer for browser access.
+export function RepoAnalyzer({ id }: AgentProps) {
+  useModel("cloudflare/@cf/zai-org/glm-4.7-flash");
+  useSandbox(cloudflareSandbox(getSandbox(env.Sandbox as unknown as DurableObjectNamespace<Sandbox<any>>, id)), { cwd: "/workspace" });
+  return instructions;
+}

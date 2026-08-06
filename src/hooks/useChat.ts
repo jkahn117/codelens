@@ -1,11 +1,10 @@
 import { useFlueAgent } from "@flue/react";
 
-// Chat composable backed by useFlueAgent. agentId must match the workflow sandboxId
-// so analysis.json lands in the same container the chat agent uses.
+// Chat composable backed by useFlueAgent. agentId is the sandboxId — the same
+// container the analysis route wrote analysis.json into.
 export function useChat(agentId: string | null) {
   const { messages, status, sendMessage } = useFlueAgent({
-    name: "repo-analyzer",
-    id: agentId || undefined,
+    url: agentId ? `/agents/repo-analyzer/${agentId}` : undefined,
   });
 
   const streaming = status === "submitted" || status === "streaming";

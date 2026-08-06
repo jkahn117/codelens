@@ -1,10 +1,8 @@
-import { useFlueClient } from "@flue/react";
 import { useState } from "react";
 import type { AnalysisResult, FeedStep } from "../types.ts";
 
-// Drives the activity feed and dashboard from a Flue workflow run.
+// Drives the activity feed and dashboard from the /api/analyze SSE stream.
 export function useAnalysis() {
-  const flue = useFlueClient();
   const [steps, setSteps] = useState<FeedStep[]>([]);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
@@ -35,40 +33,50 @@ export function useAnalysis() {
     setError(null);
 
     try {
-      const { runId } = await flue.workflows.invoke("analyze", {
-        input: { repoUrl, sandboxId },
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ repoUrl, sandboxId }),
       });
 
+      if (!res.ok || !res.body) {
+        failOpenSteps(`Analysis request failed: ${res.status}`);
+        return null;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
       let nextResult: AnalysisResult | null = null;
 
-      for await (const event of flue.runs.stream(runId, { live: true })) {
-        if (event.type === "log" && event.level === "info" && event.attributes?.status) {
-          const label = event.message;
-          const status = event.attributes.status as FeedStep["status"];
-          upsertStep(label, status);
-        }
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-        if (event.type === "run_end") {
-          if (event.isError) {
-            const err = event.error as { message?: string } | string | undefined;
-            const message =
-              typeof err === "string"
-                ? err
-                : err?.message || "Analysis failed";
-            failOpenSteps(message);
-          } else if (event.result) {
-            nextResult = event.result as AnalysisResult;
+        buffer += decoder.decode(value, { stream: true });
+
+        // Parse complete SSE events (separated by \n\n)
+        const events = buffer.split("\n\n");
+        buffer = events.pop() || "";
+
+        for (const event of events) {
+          const dataLine = event.trim();
+          if (!dataLine.startsWith("data: ")) continue;
+
+          const payload = JSON.parse(dataLine.slice(6));
+
+          if (payload.type === "step") {
+            upsertStep(payload.label, payload.status);
+          } else if (payload.type === "result") {
+            nextResult = payload.result as AnalysisResult;
             setResult(nextResult);
-            // Ensure any still-open steps close cleanly when the run succeeds.
+            // Close any still-open steps
             setSteps((prev) =>
-              prev.map((s) =>
-                s.status === "in-progress" ? { ...s, status: "complete" } : s,
-              ),
+              prev.map((s) => (s.status === "in-progress" ? { ...s, status: "complete" } : s)),
             );
-          } else {
-            failOpenSteps("Analysis finished without a result");
+          } else if (payload.type === "error") {
+            failOpenSteps(payload.message);
           }
-          break;
         }
       }
 

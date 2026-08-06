@@ -9,8 +9,10 @@ allowBuilds:
   sharp: true
   workerd: true
 
+overrides:
+  undici: ^7.29.0
+
 minimumReleaseAgeExclude:
-  - '@flue/cli@1.0.0-beta.8'
-  - '@flue/react@1.0.0-beta.8'
-  - '@flue/runtime@1.0.0-beta.8'
-  - '@flue/sdk@1.0.0-beta.8'
+  - '@flue/react@2.0.3'
+  - '@flue/runtime@2.0.3'
+  - '@flue/vite@2.0.3'

@@ -1,13 +1,13 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "codelens",
-  "compatibility_date": "2026-06-01",
+  "compatibility_date": "2026-08-01",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": "./dist/client",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/_flue/*", "/agents/*", "/workflows/*", "/runs/*"],
+    "run_worker_first": ["/agents/*", "/api/*"],
   },
   "observability": {
     "enabled": true,
@@ -31,6 +31,7 @@
       ],
     },
     { "tag": "v2", "new_sqlite_classes": ["Sandbox"] },
+    { "tag": "v3", "deleted_classes": ["FlueRegistry", "FlueAnalyzeWorkflow"] },
   ],
   "containers": [{ "class_name": "Sandbox", "image": "./sandbox/Dockerfile" }],
   "workers_dev": false,
